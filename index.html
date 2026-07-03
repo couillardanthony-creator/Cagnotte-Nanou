@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Cagnotte voyage pour Nanou — cadeau collectif ludique, avec des paliers qui se débloquent, sans jamais afficher les montants.">
+<title>Cagnotte voyage pour Nanou ✈️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* 1) VARIABLES DE THÈME */
+  :root {
+    --ciel: #8ecae6;
+    --ciel-clair: #d9edf5;
+    --peche: #ffe3ce;
+    --rose: #ff8fab;
+    --rose-clair: #ffc9d9;
+    --abricot: #ffa76b;
+    --dore: #ffcb69;
+
+    --paper: #fff8f0;
+    --paper-line: #6b4a3a;
+
+    --bg-hero: linear-gradient(160deg, var(--ciel) 0%, var(--ciel-clair) 24%, var(--peche) 48%, var(--rose-clair) 74%, var(--abricot) 100%);
+    --bg-page: linear-gradient(180deg, #fff9f2 0%, #ffeee0 100%);
+
+    --text-main: #4a3327;
+    --text-soft: #8a6f61;
+    --hero-text: #5c3d2e;
+    --hero-eyebrow-bg: rgba(255, 255, 255, 0.55);
+    --hero-line: rgba(92, 61, 46, 0.35);
+
+    --card-bg: #ffffff;
+    --card-border: rgba(107, 74, 58, 0.1);
+    --shadow-soft: 0 10px 26px rgba(107, 74, 58, 0.14);
+
+    --gauge-track-bg: #ffe3d0;
+    --gauge-fill: linear-gradient(90deg, var(--ciel), var(--rose), var(--dore));
+    --accent: #ff6f91;
+  }
+
+  [data-theme="dark"] {
+    --bg-hero: linear-gradient(160deg, #202a46 0%, #2b2750 26%, #472c4c 55%, #6a3653 80%, #8a4a55 100%);
+    --bg-page: linear-gradient(180deg, #1b1522 0%, #241a2c 100%);
+
+    --text-main: #f5e9dd;
+    --text-soft: #cbb6a8;
+    --hero-text: #fbeee1;
+    --hero-eyebrow-bg: rgba(255, 255, 255, 0.14);
+    --hero-line: rgba(251, 238, 225, 0.3);
+
+    --card-bg: #2b2333;
+    --card-border: rgba(251, 238, 225, 0.1);
+    --shadow-soft: 0 10px 26px rgba(0, 0, 0, 0.4);
+
+    --gauge-track-bg: #3a2e3d;
+    --accent: #ff9db4;
+  }
+
+  /* 2) RESET & BASE */
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-page);
+    color: var(--text-main);
+    line-height: 1.6;
+    transition: background 0.4s ease, color 0.4s ease;
+    overflow-x: hidden;
+  }
+  h1, h2, h3 {
+    font-family: 'Baloo 2', cursive;
+    line-height: 1.2;
+    margin: 0 0 0.5em;
+    color: var(--text-main);
+  }
+  p { margin: 0 0 1em; color: var(--text-soft); }
+  a { color: inherit; }
+  section { padding: 3rem 1.25rem; max-width: 720px; margin: 0 auto; }
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* 3) BOUTON DE THÈME */
+  .theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 50;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: none;
+    background: var(--card-bg);
+    box-shadow: var(--shadow-soft);
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, background 0.4s ease;
+  }
+  .theme-toggle:hover { transform: scale(1.08) rotate(-8deg); }
+  .theme-toggle:active { transform: scale(0.95); }
+
+  /* 4) HERO */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-hero);
+    padding: 3.5rem 1.25rem 3rem;
+    border-radius: 0 0 2.5rem 2.5rem;
+    text-align: center;
+    transition: background 0.4s ease;
+  }
+  .hero-doodles { position: absolute; inset: 0; pointer-events: none; }
+  .doodle {
+    position: absolute;
+    font-size: 1.6rem;
+    opacity: 0.55;
+    animation: doodleFloat 6s ease-in-out infinite;
+  }
+  .doodle-1 { top: 8%;  left: 7%;  animation-delay: 0s; }
+  .doodle-2 { top: 12%; right: 9%; animation-delay: 1.2s; font-size: 1.2rem; }
+  .doodle-3 { bottom: 32%; left: 5%; animation-delay: 2.1s; }
+  .doodle-4 { top: 6%;  left: 46%; animation-delay: 0.6s; font-size: 1.3rem; }
+  .doodle-5 { bottom: 28%; right: 7%; animation-delay: 1.8s; }
+
+  @keyframes doodleFloat {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    50% { transform: translateY(-10px) rotate(4deg); }
+  }
+
+  .hero-eyebrow {
+    display: inline-block;
+    font-weight: 600;
+    color: var(--hero-text);
+    background: var(--hero-eyebrow-bg);
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+  .hero h1 {
+    font-size: clamp(1.9rem, 5vw, 2.9rem);
+    color: var(--hero-text);
+    text-shadow: 0 2px 0 rgba(255, 255, 255, 0.35);
+  }
+  .hero-subtitle {
+    max-width: 520px;
+    margin: 0 auto 0.5rem;
+    color: var(--hero-text);
+    opacity: 0.88;
+    font-size: 1.02rem;
+  }
+
+  /* 5) PISTE DE VOL (avion lié à progressScore) */
+  .flight-track {
+    position: relative;
+    max-width: 560px;
+    margin: 2.5rem auto 1.5rem;
+    height: 74px;
+  }
+  .flight-track-line {
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    right: 5%;
+    border-top: 2px dashed var(--hero-line);
+  }
+  .plane-wrap {
+    position: absolute;
+    top: 50%;
+    left: 6%;
+    width: 120px;
+    transform: translate(-50%, -50%);
+    transition: left 0.9s cubic-bezier(0.34, 1.2, 0.4, 1);
+    animation: planeBob 2.6s ease-in-out infinite;
+    filter: drop-shadow(0 6px 7px rgba(60, 40, 30, 0.28));
+  }
+  .plane-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  transform: scaleX(-1); /* retourne horizontalement */
+}
+  }
+  @keyframes planeBob {
+    0%, 100% { margin-top: 0; }
+    50% { margin-top: -10px; }
+  }
+
+  /* 6) BILLET D'EMBARQUEMENT + VALISE */
+  .hero-props {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1.5rem;
+  }
+  .boarding-pass {
+    display: flex;
+    background: var(--card-bg);
+    border-radius: 14px;
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+    transform: rotate(-3deg);
+    animation: bpFloat 4.5s ease-in-out infinite;
+    max-width: 300px;
+    text-align: left;
+    transition: background 0.4s ease;
+  }
+  @keyframes bpFloat {
+    0%, 100% { transform: rotate(-3deg) translateY(0); }
+    50% { transform: rotate(-1deg) translateY(-7px); }
+  }
+  .boarding-pass-main { padding: 0.9rem 1rem; }
+  .boarding-pass-stub {
+    padding: 0.9rem 0.8rem;
+    border-left: 2px dashed var(--card-border);
+    background: rgba(0, 0, 0, 0.03);
+    font-size: 0.72rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: center;
+    white-space: nowrap;
+  }
+  .bp-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    margin: 0 0 0.3rem;
+  }
+  .bp-route {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.05rem;
+    margin: 0 0 0.25rem;
+    color: var(--text-main);
+  }
+  .bp-passenger { font-size: 0.7rem; letter-spacing: 0.05em; margin: 0; color: var(--text-soft); }
+  .bp-gate, .bp-seat { margin: 0; font-weight: 700; color: var(--text-main); }
+
+  .suitcase-badge {
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    animation: suitcasePulse 2.2s ease-in-out infinite;
+    transition: background 0.4s ease;
+  }
+  @keyframes suitcasePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
+  /* 7) SECTION PROGRESSION */
+  .progress-section { text-align: center; }
+
+  .washi-tape {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    width: 96px;
+    height: 26px;
+    transform: translateX(-50%) rotate(-4deg);
+    background: repeating-linear-gradient(45deg, var(--rose) 0 8px, var(--rose-clair) 8px 16px);
+    opacity: 0.9;
+    border-radius: 2px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+  }
+  .milestone-card {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+    padding: 2.1rem 1.5rem 1.8rem;
+    margin: 1.5rem 0 1.75rem;
+    transition: background 0.4s ease, box-shadow 0.3s ease;
+  }
+  .milestone-icon { font-size: 3rem; margin-bottom: 0.5rem; }
+  .milestone-card h3 { font-size: 1.4rem; margin-bottom: 0.4rem; }
+  .milestone-card p { margin: 0; }
+  .milestone-card.max-level { box-shadow: 0 0 0 3px var(--dore), var(--shadow-soft); }
+
+  @keyframes unlockPop {
+    0% { opacity: 0; transform: translateY(18px) scale(0.94); }
+    55% { opacity: 1; transform: translateY(-6px) scale(1.03); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .unlock-pop { animation: unlockPop 0.7s ease; }
+
+  .gauge-wrapper { max-width: 500px; margin: 0 auto; }
+  .gauge-track {
+    position: relative;
+    height: 22px;
+    border-radius: 999px;
+    background: var(--gauge-track-bg);
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+    transition: background 0.4s ease;
+  }
+  .gauge-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--gauge-fill);
+    border-radius: 999px;
+    transition: width 0.9s cubic-bezier(0.34, 1.2, 0.4, 1);
+  }
+  .progress-slider {
+    width: 100%;
+    margin: 0.9rem 0 0.4rem;
+    accent-color: var(--accent);
+    height: 30px;
+    cursor: pointer;
+  }
+  .gauge-caption { font-size: 0.82rem; opacity: 0.75; margin-bottom: 0.3rem; }
+  .next-teaser { font-size: 0.95rem; font-weight: 600; color: var(--accent); }
+
+  /* 8) EXPLICATION + FAQ */
+  .faq details {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 0.8rem;
+    box-shadow: var(--shadow-soft);
+    transition: background 0.4s ease;
+  }
+  .faq summary {
+    font-family: 'Baloo 2', cursive;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-main);
+    list-style: none;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::before { content: "✈️  "; }
+  .faq details p { margin: 0.6rem 0 0; }
+
+  /* 9) SECTION WERO */
+  .wero-card {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 1.4rem 1.5rem;
+    box-shadow: var(--shadow-soft);
+    transition: background 0.4s ease;
+  }
+  .wero-icon { font-size: 2.4rem; flex-shrink: 0; }
+  .wero-title { margin: 0 0 0.3rem; font-weight: 700; color: var(--text-main); }
+  .wero-phone {
+    display: inline-block;
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.3rem;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 2px dashed var(--accent);
+  }
+  .wero-hint { margin: 0.4rem 0 0; font-size: 0.8rem; opacity: 0.7; }
+
+  /* 10) FOOTER */
+  .site-footer { text-align: center; padding: 1rem 1rem 3rem; font-size: 0.9rem; opacity: 0.7; }
+
+  /* 11) RESPONSIVE */
+  @media (max-width: 640px) {
+    .hero { border-radius: 0 0 1.75rem 1.75rem; padding: 2.5rem 1rem 2rem; }
+    .hero-props { flex-direction: column; }
+    section { padding: 2.25rem 1rem; }
+    .boarding-pass-stub { white-space: normal; }
+  }
+
+  /* 12) MOUVEMENT RÉDUIT */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <button id="themeToggle" class="theme-toggle" aria-label="Passer au thème sombre">🌙</button>
+
+  <header class="hero">
+    <div class="hero-doodles" aria-hidden="true">
+      <span class="doodle doodle-1">☁️</span>
+      <span class="doodle doodle-2">⭐</span>
+      <span class="doodle doodle-3">🧭</span>
+      <span class="doodle doodle-4">☀️</span>
+      <span class="doodle doodle-5">📍</span>
+    </div>
+
+    <p class="hero-eyebrow">✈️ Cadeau collectif en cours de décollage</p>
+    <h1>Cagnotte voyage pour Nanou</h1>
+    <p class="hero-subtitle">Cadeau collectif pour financer un voyage, avec une progression ludique et des objets de voyage qui se débloquent à chaque palier.</p>
+
+<div class="flight-track" aria-hidden="true">
+  <div class="flight-track-line"></div>
+  <div class="plane-wrap" id="planeWrap">
+    <img src="nanou-avion.png.png"
+         alt="Nanou dans son avion qui avance avec la cagnotte"
+         class="plane-img">
+  </div>
+</div>
+
+    <div class="hero-props">
+      <div class="boarding-pass">
+        <div class="boarding-pass-main">
+          <p class="bp-label">Boarding pass</p>
+          <p class="bp-route">ICI ✈ ???</p>
+          <p class="bp-passenger">Passager : Nanou</p>
+        </div>
+        <div class="boarding-pass-stub">
+          <p class="bp-gate">Porte<br>??</p>
+          <p class="bp-seat">Siège<br>4A</p>
+        </div>
+      </div>
+      <div class="suitcase-badge" aria-hidden="true">
+        <span class="suitcase-emoji">🧳</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="progress-section" aria-labelledby="progress-heading">
+      <h2 id="progress-heading">Niveau de la cagnotte</h2>
+
+      <div class="milestone-card" id="milestoneCard" aria-live="polite">
+        <div class="washi-tape" aria-hidden="true"></div>
+        <div class="milestone-icon" id="milestoneIcon">🎫</div>
+        <h3 id="milestoneLabel">Ticket de métro froissé</h3>
+        <p id="milestoneDescription">Nanou a déjà le droit d'aller au coin de la rue, c'est un début.</p>
+      </div>
+
+      <div class="gauge-wrapper">
+        <div class="gauge-track" id="gaugeTrack">
+          <div class="gauge-fill" id="gaugeFill"></div>
+        </div>
+        <input
+          type="range"
+          id="progressSlider"
+          class="progress-slider"
+          min="0"
+          max="500"
+          step="5"
+          value="0"
+          aria-label="Niveau de la cagnotte"
+        >
+        <p class="gauge-caption">🎚️ Ce niveau est mis à jour à la main par l'organisateur, au fil des participations.</p>
+        <p class="next-teaser" id="nextTeaser">🎁 Un nouveau palier mystère attend un peu plus loin...</p>
+      </div>
+    </section>
+
+    <section class="explanation-section">
+      <h2>Comment fonctionne la cagnotte ?</h2>
+      <p>
+        Cette cagnotte est un cadeau collectif organisé pour offrir un voyage à Nanou.
+        Chaque participation, petite ou grande, fait avancer la jauge ci-dessus — mais on
+        ne révèle jamais les montants exacts, seulement le niveau atteint ! À chaque palier
+        franchi, un nouvel objet de voyage (plus ou moins utile, plus ou moins sérieux) se
+        débloque, pour rendre l'attente aussi amusante que le voyage lui-même. Alors on
+        regarde la jauge monter, on rigole des objets débloqués, et on compte les jours
+        jusqu'au grand départ.
+      </p>
+
+      <div class="faq">
+        <details>
+          <summary>Est-ce que je vois le montant total ?</summary>
+          <p>Non ! Seul le niveau de progression (et les objets qu'il débloque) est visible ici. Le montant exact reste secret, pour garder toute la surprise.</p>
+        </details>
+        <details>
+          <summary>Comment participer ?</summary>
+          <p>Par virement, par Wero (juste en dessous 👇), ou par tout autre moyen qui vous arrange. Chaque contribution fait avancer la jauge, quel que soit son montant.</p>
+        </details>
+        <details>
+          <summary>À quoi servira l'argent ?</summary>
+          <p>À financer le voyage de Nanou : transport, hébergement, activités sur place et quelques souvenirs pour la route.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="wero-section">
+      <h2>Participer par Wero / virement</h2>
+      <div class="wero-card">
+        <div class="wero-icon" aria-hidden="true">📱🧳</div>
+        <div class="wero-text">
+          <p class="wero-title">Téléphone d'Anthony pour Wero</p>
+          <a class="wero-phone" href="tel:+33634167294">06 34 16 72 94</a>
+          <p class="wero-hint">Cliquable directement depuis un mobile 📲</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Fait avec ❤️ (et un peu de JavaScript) pour le voyage de Nanou ✈️</p>
+  </footer>
+
+<script>
+  const MILESTONES = [
+    { score: 0,   icon: "🎫", label: "Ticket de métro froissé", description: "Nanou a déjà le droit d'aller au coin de la rue, c'est un début." },
+    { score: 5,   icon: "🩴", label: "Paire de tongs légendaires", description: "Le sable est prêt, le budget un peu moins, mais on y croit." },
+    { score: 10,  icon: "🧴", label: "Crème solaire 50+", description: "On protège Nanou des coups de soleil, pas encore du prix des billets." },
+    { score: 15,  icon: "🧢", label: "Casquette souvenir improbable", description: "Nanou peut déjà revenir avec une casquette douteuse, c'est cadeau." },
+    { score: 20,  icon: "🏖️", label: "Serviette de plage avec flamants roses", description: "On commence à voir la plage, même si c'est encore un peu flou." },
+    { score: 25,  icon: "🕶️", label: "Lunettes de soleil flashy", description: "Le style est assuré, le vol est encore en attente." },
+    { score: 30,  icon: "📘", label: "Guide de voyage en papier", description: "Le trajet est planifié, il ne manque plus que le trajet." },
+    { score: 35,  icon: "👡", label: "Sandales de rando hésitantes", description: "Nanou peut marcher, pas encore trop loin mais ça progresse." },
+    { score: 40,  icon: "🧊", label: "Petite glacière de plage", description: "On garde les boissons au frais en attendant les billets." },
+    { score: 45,  icon: "💌", label: "Carte postale déjà prête", description: "Nanou est prête à écrire « Vous me manquez », même si elle est encore chez elle." },
+    { score: 50,  icon: "👝", label: "Petit sac banane de touriste", description: "Discret comme un touriste français en short et claquettes." },
+    { score: 55,  icon: "👒", label: "Chapeau de paille bancal", description: "Il penche un peu sur la tête, comme le budget total, mais l'allure y est déjà." },
+    { score: 60,  icon: "🧭", label: "Boussole en plastique", description: "On ne sait pas encore où on va, mais au moins on a de quoi chercher la direction." },
+    { score: 65,  icon: "🎧", label: "Playlist spéciale vacances", description: "La bande-son du voyage existe déjà, il ne manque plus que le voyage." },
+    { score: 70,  icon: "🤿", label: "Masque de snorkeling", description: "L'équipement est prêt à explorer les fonds marins, la mer est encore loin." },
+    { score: 75,  icon: "🧳", label: "Mini sac de voyage", description: "On commence à remplir la valise, doucement mais sûrement." },
+    { score: 80,  icon: "🪪", label: "Passeport dépoussiéré", description: "Nanou a retrouvé son passeport, et il n'est même pas périmé, c'est un signe." },
+    { score: 85,  icon: "🧦", label: "Chaussettes de l'avion", description: "Le confort en vol est déjà réglé, il ne manque plus que le vol." },
+    { score: 90,  icon: "🍫", label: "Barre de céréales « au cas où »", description: "Nanou prévoit déjà les urgences, avant même de connaître la destination." },
+    { score: 95,  icon: "🔋", label: "Batterie externe chargée à bloc", description: "Plus aucune excuse pour rater une seule photo de vacances." },
+    { score: 100, icon: "🛏️", label: "Nuit en hébergement cosy", description: "Le voyage sent enfin la vraie escapade." },
+    { score: 110, icon: "📸", label: "Appareil photo jetable", description: "Nanou est prête à mitrailler des souvenirs, il ne manque plus que le décor." },
+    { score: 120, icon: "🏷️", label: "Étiquette à bagage personnalisée", description: "La valise a désormais un nom, elle n'a juste pas encore de destination." },
+    { score: 130, icon: "🌴", label: "Petite plante en pot façon palmier", description: "L'ambiance vacances s'installe déjà dans le salon de Nanou." },
+    { score: 140, icon: "🛄", label: "Roulette de valise qui grince", description: "On teste le matériel avant l'heure, ça promet une belle aventure." },
+    { score: 150, icon: "🎒", label: "Sac à dos de baroudeur", description: "Nanou peut officiellement jouer les aventurières." },
+    { score: 160, icon: "🌐", label: "Application de traduction installée", description: "Nanou peut déjà dire bonjour dans trois langues, l'anticipation est réelle." },
+    { score: 170, icon: "💳", label: "Débuts de recherche de billets", description: "Les onglets du navigateur s'accumulent, la carte bancaire retient son souffle." },
+    { score: 180, icon: "🔌", label: "Adaptateur de prise universel", description: "Nanou pourra recharger son téléphone absolument n'importe où, un jour." },
+    { score: 190, icon: "🪥", label: "Trousse de toilette format cabine", description: "Tout est calibré pour l'aéroport, il ne manque plus que l'aéroport." },
+    { score: 200, icon: "🗺️", label: "Carte du monde froissée", description: "Plus besoin de Google Maps, Nanou peut se perdre pour de vrai." },
+    { score: 225, icon: "🤔", label: "Itinéraire à moitié décidé", description: "On hésite encore entre deux destinations, ce qui est déjà un sacré progrès." },
+    { score: 250, icon: "🚂", label: "Train panoramique", description: "Le paysage défile, et la cagnotte aussi." },
+    { score: 275, icon: "🍽️", label: "Réservation dans un petit resto local", description: "Nanou salive déjà devant une carte qu'elle n'a pas encore vue." },
+    { score: 300, icon: "🏡", label: "Hébergement cosy + activités", description: "On commence à parler de vraies vacances, pas juste d'un week-end." },
+    { score: 325, icon: "📅", label: "Dates posées au calendrier", description: "C'est officiel : Nanou a le droit de compter les jours." },
+    { score: 350, icon: "🛅", label: "Valise presque premium", description: "On est à deux doigts de la valise qui roule vraiment droit." },
+    { score: 375, icon: "🎁", label: "Petit cadeau surprise glissé dans la valise", description: "Le voyage devient un cadeau dans le cadeau." },
+    { score: 400, icon: "🍹", label: "Cocktail à l'aéroport", description: "Nanou peut déjà siroter en attendant l'embarquement." },
+    { score: 425, icon: "🌄", label: "Appareil photo qui n'attend plus que les paysages", description: "La mémoire est vide, prête à se remplir de souvenirs." },
+    { score: 450, icon: "✈️", label: "Avion plein de souvenirs", description: "On dirait bien que ce voyage va laisser des traces (positives)." },
+    { score: 475, icon: "🚪", label: "Valises posées devant la porte", description: "Il ne reste plus qu'à fermer la porte à clé et à partir." },
+    { score: 500, icon: "🏝️", label: "Voyage de rêve pour Nanou", description: "Objectif atteint : carte postale, souvenirs, et Nanou qui rayonne." }
+  ];
+
+  const STORAGE_PROGRESS = "cagnotte-nanou-progress";
+  const STORAGE_THEME = "cagnotte-nanou-theme";
+  const MAX_SCORE = 500;
+
+  let progressScore = 0;
+  let lastMilestoneScore = null;
+
+  const slider = document.getElementById("progressSlider");
+  const gaugeFill = document.getElementById("gaugeFill");
+  const planeWrap = document.getElementById("planeWrap");
+  const milestoneCard = document.getElementById("milestoneCard");
+  const milestoneIcon = document.getElementById("milestoneIcon");
+  const milestoneLabel = document.getElementById("milestoneLabel");
+  const milestoneDescription = document.getElementById("milestoneDescription");
+  const nextTeaser = document.getElementById("nextTeaser");
+  const themeToggle = document.getElementById("themeToggle");
+
+  function safeGetStorage(key) {
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function safeSetStorage(key, value) {
+    try { localStorage.setItem(key, value); } catch (e) {}
+  }
+
+  function getCurrentMilestone(score) {
+    let current = MILESTONES[0];
+    for (const m of MILESTONES) {
+      if (m.score <= score) {
+        current = m;
+      } else {
+        break;
+      }
+    }
+    return current;
+  }
+
+  function getNextMilestone(score) {
+    return MILESTONES.find(function (m) { return m.score > score; }) || null;
+  }
+
+  function updateDisplay(score, options) {
+    const animateUnlock = options && options.animateUnlock !== undefined ? options.animateUnlock : true;
+    const percent = Math.min(100, Math.max(0, (score / MAX_SCORE) * 100));
+    const current = getCurrentMilestone(score);
+    const next = getNextMilestone(score);
+
+    gaugeFill.style.width = percent + "%";
+
+    const trackPosition = 6 + percent * 0.88;
+    planeWrap.style.left = trackPosition + "%";
+
+    const isNewMilestone = current.score !== lastMilestoneScore;
+    milestoneIcon.textContent = current.icon;
+    milestoneLabel.textContent = current.label;
+    milestoneDescription.textContent = current.description;
+    milestoneCard.classList.toggle("max-level", current.score === MAX_SCORE);
+
+    if (animateUnlock && isNewMilestone && lastMilestoneScore !== null) {
+      milestoneCard.classList.remove("unlock-pop");
+      void milestoneCard.offsetWidth;
+      milestoneCard.classList.add("unlock-pop");
+    }
+    lastMilestoneScore = current.score;
+
+    nextTeaser.textContent = next
+      ? "🎁 Un nouveau palier mystère attend un peu plus loin..."
+      : "🌟 Tous les paliers sont débloqués, bon voyage Nanou !";
+
+    slider.setAttribute("aria-valuetext", current.label);
+  }
+
+  slider.addEventListener("input", function (event) {
+    progressScore = parseInt(event.target.value, 10);
+    updateDisplay(progressScore);
+    safeSetStorage(STORAGE_PROGRESS, String(progressScore));
+  });
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    themeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
+    themeToggle.setAttribute("aria-label", theme === "dark" ? "Passer au thème clair" : "Passer au thème sombre");
+  }
+
+  themeToggle.addEventListener("click", function () {
+    const current = document.documentElement.getAttribute("data-theme");
+    const next = current === "dark" ? "light" : "dark";
+    applyTheme(next);
+    safeSetStorage(STORAGE_THEME, next);
+  });
+
+  function init() {
+    const savedProgress = safeGetStorage(STORAGE_PROGRESS);
+    progressScore = savedProgress !== null ? parseInt(savedProgress, 10) : 0;
+    slider.value = String(progressScore);
+
+    updateDisplay(progressScore, { animateUnlock: false });
+
+    const savedTheme = safeGetStorage(STORAGE_THEME);
+    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    applyTheme(savedTheme || (prefersDark ? "dark" : "light"));
+  }
+
+  init();
+</script>
+</body>
+</html>
